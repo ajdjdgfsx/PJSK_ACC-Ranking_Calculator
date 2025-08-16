@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音游成绩计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+        }
+        input {
+            padding: 8px;
+            width: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border-radius: 5px;
+            display: none;
+        }
+        .result h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>音游成绩计算器</h1>
+        
+        <div class="input-group">
+            <label for="perfect">Perfect数量:</label>
+            <input type="number" id="perfect" min="0" value="0">
+        </div>
+        
+        <div class="input-group">
+            <label for="great">Great数量:</label>
+            <input type="number" id="great" min="0" value="0">
+        </div>
+        
+        <div class="input-group">
+            <label for="good">Good数量:</label>
+            <input type="number" id="good" min="0" value="0">
+        </div>
+        
+        <div class="input-group">
+            <label for="bad">Bad数量:</label>
+            <input type="number" id="bad" min="0" value="0">
+        </div>
+        
+        <div class="input-group">
+            <label for="miss">Miss数量:</label>
+            <input type="number" id="miss" min="0" value="0">
+        </div>
+        
+        <div class="input-group">
+            <label for="difficulty">谱面定数:</label>
+            <input type="number" id="difficulty" min="0" step="0.1" value="10.0">
+        </div>
+        
+        <button onclick="calculate()">计算成绩</button>
+        
+        <div id="result" class="result">
+            <h3>计算结果</h3>
+            <p>ACC: <span id="accResult"></span>%</p>
+            <p>Ranking: <span id="rankingResult"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            // 获取输入值
+            const perfect = parseInt(document.getElementById('perfect').value) || 0;
+            const great = parseInt(document.getElementById('great').value) || 0;
+            const good = parseInt(document.getElementById('good').value) || 0;
+            const bad = parseInt(document.getElementById('bad').value) || 0;
+            const miss = parseInt(document.getElementById('miss').value) || 0;
+            const difficulty = parseFloat(document.getElementById('difficulty').value) || 0;
+            
+            // 计算总点击数
+            const total = perfect + great + good + bad + miss;
+            
+            if (total === 0) {
+                alert("请输入至少一个判定数量！");
+                return;
+            }
+            
+            // 计算ACC
+            const acc = (perfect * 1 + great * 0.75 + good * 0.5 + bad * 0 + miss * 0) / total;
+            const accPercent = (acc * 100).toFixed(2);
+            
+            // 计算Ranking
+            const ranking = Math.pow((100 * acc - 55) / 45, 2) * difficulty;
+            const rankingRounded = ranking.toFixed(2);
+            
+            // 显示结果
+            document.getElementById('accResult').textContent = accPercent;
+            document.getElementById('rankingResult').textContent = rankingRounded;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
