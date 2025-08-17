@@ -6,23 +6,29 @@
     <title>PJSK ACC&Ranking计算器</title>
     <style>
         :root {
-            --primary: #7c4dff;
-            --primary-light: #b47cff;
-            --primary-dark: #3f1dcb;
-            --secondary: #ff4081;
-            --secondary-light: #ff79b0;
-            --secondary-dark: #c60055;
-            --background: #f5f5f7;
-            --surface: #ffffff;
-            --error: #cf6679;
+            --primary: #a67cc5;
+            --primary-light: #b38fcf;
+            --primary-dark: #7e5a9c;
+            --secondary: #4cb87a;
+            --secondary-light: #5ec48d;
+            --secondary-dark: #3d9e65;
+            --accent: #f18abb;
+            --accent-light: #f8a5c9;
+            --accent-dark: #e06ea3;
+            --background: linear-gradient(135deg, #e8d1f0 0%, #d9f0fa 50%, #fce6ed 100%);
+            --surface: rgba(255, 255, 255, 0.95);
+            --error: #ff6b6b;
             --on-primary: #ffffff;
             --on-secondary: #ffffff;
-            --on-background: #212121;
-            --on-surface: #212121;
-            --on-error: #000000;
-            --divider: #e0e0e0;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --on-accent: #ffffff;
+            --on-background: #34495e;
+            --on-surface: #3a506b;
+            --on-error: #ffffff;
+            --divider: rgba(0, 0, 0, 0.08);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glow: 0 0 15px rgba(166, 124, 197, 0.2);
+            --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.98) 0%, rgba(250,250,250,0.98) 100%);
         }
 
         * {
@@ -35,7 +41,8 @@
             font-family: 'Roboto', 'Noto Sans SC', sans-serif;
             line-height: 1.6;
             color: var(--on-background);
-            background-color: var(--background);
+            background: var(--background);
+            background-attachment: fixed;
             padding: 24px;
             min-height: 100vh;
         }
@@ -49,12 +56,14 @@
             text-align: center;
             margin-bottom: 32px;
             padding: 24px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(145deg, #a67cc5, #f18abb);
             color: var(--on-primary);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
+            border-radius: 16px;
+            box-shadow: var(--shadow), var(--glow);
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         header::after {
@@ -64,16 +73,24 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.05)" d="M0,0 L100,0 L100,100 L0,100 Z" /></svg>');
-            opacity: 0.6;
+            background: linear-gradient(
+                135deg, 
+                rgba(255,255,255,0.15) 0%, 
+                rgba(255,255,255,0) 100%
+            );
+            opacity: 0.8;
         }
 
         h1 {
             font-size: 2.4rem;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 8px;
             position: relative;
             z-index: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(90deg, #ffffff, #f8d883);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         header p {
@@ -81,27 +98,33 @@
             opacity: 0.9;
             position: relative;
             z-index: 1;
+            color: rgba(255,255,255,0.9);
         }
 
         .card {
-            background: var(--surface);
-            border-radius: 12px;
+            background: var(--card-gradient);
+            border-radius: 16px;
             padding: 24px;
             margin-bottom: 24px;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), var(--glow);
         }
 
         h2 {
             font-size: 1.5rem;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 16px;
             color: var(--primary-dark);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         h3 {
@@ -150,14 +173,14 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
-            background: var(--surface);
+            background: rgba(255, 255, 255, 0.9);
             color: var(--on-surface);
         }
 
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(166, 124, 197, 0.15);
         }
 
         button {
@@ -172,26 +195,31 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         button.primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             color: var(--on-primary);
+            border: none;
         }
 
         button.primary:hover {
-            background: var(--primary-light);
+            background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(166, 124, 197, 0.2);
         }
 
         button.secondary {
-            background: var(--secondary);
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
             color: var(--on-secondary);
+            border: none;
         }
 
         button.secondary:hover {
-            background: var(--secondary-light);
+            background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 184, 122, 0.2);
         }
 
         button.outline {
@@ -201,7 +229,7 @@
         }
 
         button.outline:hover {
-            background: rgba(124, 77, 255, 0.08);
+            background: rgba(166, 124, 197, 0.08);
         }
 
         button.danger {
@@ -211,7 +239,7 @@
         }
 
         button.danger:hover {
-            background: rgba(207, 102, 121, 0.08);
+            background: rgba(255, 107, 107, 0.08);
         }
 
         table {
@@ -228,56 +256,54 @@
         }
 
         th {
-            background: rgba(124, 77, 255, 0.08);
+            background: rgba(166, 124, 197, 0.08);
             color: var(--primary-dark);
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
             font-size: 0.85rem;
             letter-spacing: 0.5px;
         }
 
         tr:hover {
-            background: rgba(124, 77, 255, 0.04);
+            background: rgba(166, 124, 197, 0.03);
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
+            padding: 4px 12px;
+            border-radius: 16px;
             font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            color: white;
         }
 
         .badge.easy {
-            background: #4caf50;
-            color: white;
+            background: #65DA82;
         }
 
         .badge.normal {
-            background: #2196f3;
-            color: white;
+            background: #4BC3FF;
         }
 
         .badge.hard {
-            background: #ff9800;
-            color: rgba(0, 0, 0, 0.87);
+            background: #F9CD4A;
         }
 
         .badge.expert {
-            background: #f44336;
-            color: white;
+            background: #ED527A;
         }
 
         .badge.master {
-            background: #9c27b0;
-            color: white;
+            background: #B03EEE;
         }
 
         .badge.append {
-            background: #ff4081;
+            background: linear-gradient(135deg, #AC98F7, #ED88D4);
             color: white;
+            box-shadow: 0 2px 6px rgba(172, 152, 247, 0.3);
         }
 
         .difficulty-group {
@@ -305,9 +331,10 @@
             gap: 24px;
             margin-top: 24px;
             padding: 24px;
-            background: rgba(124, 77, 255, 0.05);
-            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(166, 124, 197, 0.05), rgba(248, 216, 131, 0.05));
+            border-radius: 16px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
         .result-item {
@@ -325,9 +352,12 @@
 
         .result-value {
             font-size: 2rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--primary-dark);
             margin: 8px 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .result-unit {
@@ -381,8 +411,9 @@
 
         .divider {
             height: 1px;
-            background: var(--divider);
+            background: linear-gradient(90deg, transparent, var(--divider), transparent);
             margin: 24px 0;
+            border: none;
         }
 
         .empty-state {
@@ -395,16 +426,36 @@
         .history-container {
             margin-top: 32px;
         }
+        
+        /* --- START: 修复后的历史记录样式 --- */
+        .history-item-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .history-item-slide {
+            position: relative;
+            width: 100%;
+            transition: transform 0.3s ease;
+            background: white;
+            z-index: 1; /* 确保滑动项在删除按钮上方 */
+        }
 
         .history-item {
             padding: 16px;
             border-bottom: 1px solid var(--divider);
             transition: var(--transition);
             position: relative;
+            background: white;
         }
+        /* --- END: 修复后的历史记录样式 --- */
 
         .history-item:hover {
-            background: rgba(124, 77, 255, 0.04);
+            background: rgba(166, 124, 197, 0.03);
         }
 
         .history-header {
@@ -443,27 +494,216 @@
             margin-right: 4px;
         }
 
-        .history-actions {
+        /* --- START: 修复后的删除按钮样式 --- */
+        .history-delete-button {
             position: absolute;
-            top: 16px;
-            right: 16px;
+            top: 0;
+            right: 0; /* 修改: 从 -80px 改为 0 */
+            width: 80px;
+            height: 100%;
+            background: var(--error);
+            color: white;
             display: flex;
-            gap: 8px;
-        }
-
-        .history-action-btn {
-            padding: 6px 10px;
-            font-size: 0.75rem;
-            border-radius: 4px;
-            cursor: pointer;
-            display: inline-flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 0; /* 修改: 确保在滑动项下方 */
+        }
+        /* --- END: 修复后的删除按钮样式 --- */
+
+        .history-delete-button:hover {
+            background: #ff5252;
         }
 
         .history-clear-all {
             margin-top: 16px;
             text-align: right;
+        }
+
+        .song-group {
+            margin-bottom: 24px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .song-group-header {
+            background: rgba(166, 124, 197, 0.08);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .song-group-title {
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+
+        .song-group-count {
+            font-size: 0.85rem;
+            color: var(--on-surface);
+            opacity: 0.7;
+        }
+
+        .song-group-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .song-group.expanded .song-group-content {
+            max-height: 2000px;
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .sort-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--on-surface);
+            opacity: 0.8;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--on-surface);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .best50-container {
+            margin-top: 32px;
+        }
+
+        .best50-card {
+            background: var(--card-gradient);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .best50-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .best50-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .best50-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(250,250,250,0.95));
+            border-radius: 12px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .best50-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .best50-item-title {
+            font-weight: 500;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .best50-item-difficulty {
+            font-size: 0.8rem;
+            color: var(--on-surface);
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .best50-item-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary), var(--primary-dark));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-100%); opacity: 0; }
+        }
+        
+        .slide-out {
+            animation: slideOut 0.3s ease forwards;
         }
 
         @media (max-width: 768px) {
@@ -517,51 +757,54 @@
                 grid-template-columns: 1fr;
             }
             
-            .history-actions {
-                position: static;
-                margin-top: 8px;
-                justify-content: flex-end;
-            }
-            
             .history-title {
                 max-width: 100%;
             }
-        }
 
-        /* 动画效果 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+            .sort-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
-        .fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
+            .header-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
 
-        /* 滚动条样式 */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--background);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-light);
+            .best50-results {
+                grid-template-columns: 1fr;
+            }
+            
+            .history-delete-button {
+                width: 70px;
+                /* right: -70px; (此行已无效) */
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="fade-in">
-            <h1>PJSK ACC&Ranking计算器</h1>            
+            <h1>PJSK ACC&Ranking计算器</h1>
+            <div class="header-actions">
+                <button class="secondary" onclick="exportData()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    导出成绩数据备份
+                </button>
+                <button class="secondary" onclick="document.getElementById('fileInput').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    导入成绩数据备份
+                    <input type="file" id="fileInput" class="file-input" accept=".json" onchange="importData(event)">
+                </button>
+            </div>
         </header>
         
         <div class="card fade-in">
@@ -693,33 +936,84 @@
                         <div class="result-unit">Ranking</div>
                     </div>
                 </div>
-                
-                <div class="divider"></div>
-                
-                <div class="data-actions">
-                    <button class="secondary" onclick="exportData()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        导出成绩数据
-                    </button>
-                    <button class="secondary" onclick="document.getElementById('fileInput').click()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        导入成绩数据
-                        <input type="file" id="fileInput" class="file-input" accept=".json" onchange="importData(event)">
-                    </button>
+            </div>
+        </div>
+
+        <div class="card best50-container fade-in">
+            <h2>Best50计算</h2>
+            <p>根据您的历史记录计算Best50成绩（5首ACC100和45首其他最佳成绩的平均值）</p>
+            
+            <div class="best50-header">
+                <h3>计算结果</h3>
+                <button class="primary" onclick="calculateBest50()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    计算Best50
+                </button>
+            </div>
+            
+            <div class="best50-results" id="best50Results" style="display: none;">
+                <div class="best50-item">
+                    <div class="best50-item-title">ACC100歌曲</div>
+                    <div class="best50-item-difficulty">5首最佳成绩</div>
+                    <div id="best50PerfectCount" class="best50-item-value">0</div>
+                </div>
+                <div class="best50-item">
+                    <div class="best50-item-title">其他歌曲</div>
+                    <div class="best50-item-difficulty">45首最佳成绩</div>
+                    <div id="best50OtherCount" class="best50-item-value">0</div>
+                </div>
+                <div class="best50-item">
+                    <div class="best50-item-title">平均ACC</div>
+                    <div class="best50-item-difficulty">所有50首歌曲</div>
+                    <div id="best50AvgAcc" class="best50-item-value">0%</div>
+                </div>
+                <div class="best50-item">
+                    <div class="best50-item-title">平均Ranking</div>
+                    <div class="best50-item-difficulty">所有50首歌曲</div>
+                    <div id="best50AvgRanking" class="best50-item-value">0.00</div>
+                </div>
+            </div>
+            
+            <div id="best50Details" style="margin-top: 24px; display: none;">
+                <h3>详细记录</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>歌曲名称</th>
+                                <th>难度</th>
+                                <th>ACC</th>
+                                <th>Ranking</th>
+                                <th>日期</th>
+                            </tr>
+                        </thead>
+                        <tbody id="best50DetailsBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
         
         <div class="card fade-in history-container" id="historyContainer">
             <h2>历史记录</h2>
+            
+            <div class="sort-options">
+                <span class="sort-label">排序方式:</span>
+                <select id="sortBy" class="sort-select" onchange="renderHistory()">
+                    <option value="date-desc">按日期 (最新)</option>
+                    <option value="date-asc">按日期 (最早)</option>
+                    <option value="title-asc">按歌曲名称 (A-Z)</option>
+                    <option value="title-desc">按歌曲名称 (Z-A)</option>
+                    <option value="ranking-desc">按评分 (最高)</option>
+                    <option value="ranking-asc">按评分 (最低)</option>
+                </select>
+            </div>
+            
             <div id="historyList"></div>
             <div class="history-clear-all" id="clearAllContainer" style="display: none;">
                 <button class="danger" onclick="clearAllHistory()">
@@ -735,8 +1029,7 @@
         </div>
     </div>
 
-    <script>
-        // 更新后的音乐数据
+    <script>     
         const musics = [
   {
     "id": 1,
@@ -14577,7 +14870,6 @@
     "isFullLength": false
   }
 ];
-
         const difficulties = [
   {
     "id": 1,
@@ -35293,44 +35585,36 @@
     "totalNoteCount": 1220
   }
 ];
-
-        // 存储当前选中的歌曲和难度
+        
         let currentSelectedSong = null;
         let currentSelectedDifficulty = null;
-        
-        // 存储所有成绩记录
         let allRecords = JSON.parse(localStorage.getItem('musicGameRecords')) || [];
 
-        // 页面加载时显示所有歌曲和历史记录
         document.addEventListener('DOMContentLoaded', function() {
             displayAllSongs();
             renderHistory();
+            initSwipeListeners();
         });
 
-        // 显示所有歌曲（按歌曲分组显示难度）
         function displayAllSongs() {
             const resultsBody = document.getElementById('resultsBody');
             resultsBody.innerHTML = '';
             
-            // 按歌曲ID分组
             const songsWithDifficulties = {};
-            
             musics.forEach(music => {
                 songsWithDifficulties[music.id] = {
                     ...music,
                     difficulties: difficulties.filter(diff => diff.musicId === music.id)
                 };
             });
-            
-            // 显示所有歌曲
+
             let hasResults = false;
             Object.values(songsWithDifficulties).forEach(song => {
                 if (song.difficulties.length > 0) {
                     hasResults = true;
                     const row = document.createElement('tr');
                     row.className = 'fade-in';
-                    
-                    // 获取所有难度并显示（只显示等级和颜色）
+           
                     const difficultyBadges = song.difficulties.map(diff => {
                         return `<span class="badge ${diff.musicDifficulty}">Lv.${diff.playLevel}</span>`;
                     }).join(' ');
@@ -35349,7 +35633,6 @@
                             </button>
                         </td>
                     `;
-                    
                     resultsBody.appendChild(row);
                 }
             });
@@ -35357,7 +35640,6 @@
             document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
         }
 
-        // 显示歌曲的所有难度供选择
         function showDifficulties(musicId) {
             const song = musics.find(m => m.id === musicId);
             const songDifficulties = difficulties.filter(diff => diff.musicId === musicId);
@@ -35384,7 +35666,6 @@
             });
         }
 
-        // 搜索音乐
         function searchMusic() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const searchType = document.getElementById('searchType').value;
@@ -35392,14 +35673,12 @@
             
             const resultsBody = document.getElementById('resultsBody');
             resultsBody.innerHTML = '';
-            
-            // 如果没有搜索词且没有难度筛选，则显示所有歌曲
+
             if (!searchTerm && difficultyFilter === 'all') {
                 displayAllSongs();
                 return;
             }
             
-            // 根据搜索类型过滤歌曲
             let filteredMusics = musics;
             if (searchTerm) {
                 filteredMusics = musics.filter(music => {
@@ -35414,14 +35693,12 @@
                 });
             }
             
-            // 显示匹配的歌曲及其难度
             let hasResults = false;
             const songsWithDifficulties = {};
             
             filteredMusics.forEach(music => {
                 let songDifficulties = difficulties.filter(diff => diff.musicId === music.id);
                 
-                // 应用难度筛选
                 if (difficultyFilter !== 'all') {
                     songDifficulties = songDifficulties.filter(diff => diff.musicDifficulty === difficultyFilter);
                 }
@@ -35433,14 +35710,12 @@
                     };
                 }
             });
-            
-            // 显示搜索结果
+
             Object.values(songsWithDifficulties).forEach(song => {
                 hasResults = true;
                 const row = document.createElement('tr');
                 row.className = 'fade-in';
                 
-                // 获取所有难度并显示（只显示等级和颜色）
                 const difficultyBadges = song.difficulties.map(diff => {
                     return `<span class="badge ${diff.musicDifficulty}">Lv.${diff.playLevel}</span>`;
                 }).join(' ');
@@ -35459,20 +35734,18 @@
                         </button>
                     </td>
                 `;
-                
                 resultsBody.appendChild(row);
             });
             
             document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
         }
 
-        // 选择歌曲和难度
         function selectSong(musicId, difficulty) {
             currentSelectedSong = musics.find(m => m.id === musicId);
             currentSelectedDifficulty = difficulties.find(d => 
                 d.musicId === musicId && d.musicDifficulty === difficulty
             );
-            
+
             document.getElementById('selectedSongTitle').textContent = currentSelectedSong.title;
             document.getElementById('selectedArtist').textContent = currentSelectedSong.composer;
             
@@ -35483,22 +35756,17 @@
             document.getElementById('chartConstant').textContent = `谱面定数: ${currentSelectedDifficulty.playLevel}`;
             document.getElementById('constantInput').value = currentSelectedDifficulty.playLevel;
             
-            // 显示音符数量
             document.getElementById('totalNotes').textContent = `物量: ${currentSelectedDifficulty.totalNoteCount}`;
-            
             document.getElementById('calculatorContainer').style.display = 'block';
             document.getElementById('resultsDisplay').style.display = 'none';
             
-            // 清空输入
             ['perfectInput', 'greatInput', 'goodInput', 'badInput', 'missInput'].forEach(id => {
                 document.getElementById(id).value = '';
             });
-            
-            // 滚动到顶部
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 重置选择
         function resetSelection() {
             document.getElementById('calculatorContainer').style.display = 'none';
             document.getElementById('searchInput').value = '';
@@ -35507,7 +35775,6 @@
             displayAllSongs();
         }
 
-        // 计算ACC和Ranking
         function calculate() {
             const perfect = parseInt(document.getElementById('perfectInput').value) || 0;
             const great = parseInt(document.getElementById('greatInput').value) || 0;
@@ -35515,8 +35782,7 @@
             const bad = parseInt(document.getElementById('badInput').value) || 0;
             const miss = parseInt(document.getElementById('missInput').value) || 0;
             const constant = parseFloat(document.getElementById('constantInput').value) || 0;
-            
-            // 计算ACC
+
             const totalNotes = perfect + great + good + bad + miss;
             if (totalNotes === 0) {
                 alert('请输入至少一个判定数量');
@@ -35524,18 +35790,14 @@
             }
             
             const acc = (perfect * 1 + great * 0.75 + good * 0.5 + bad * 0 + miss * 0) / totalNotes;
-            
-            // 计算单曲Ranking
             const ranking = Math.pow((100 * acc - 55) / 45, 2) * constant;
-            
-            // 显示结果
+
             document.getElementById('accResult').textContent = (acc * 100).toFixed(2);
             document.getElementById('rankingResult').textContent = ranking.toFixed(2);
             document.getElementById('resultsDisplay').style.display = 'grid';
             
-            // 创建记录对象
             const record = {
-                id: Date.now(), // 使用时间戳作为唯一ID
+                id: Date.now(),
                 songId: currentSelectedSong.id,
                 songTitle: currentSelectedSong.title,
                 artist: currentSelectedSong.composer,
@@ -35556,20 +35818,67 @@
                 }
             };
             
-            // 添加到记录数组
             allRecords.push(record);
-            
-            // 保存到本地存储
             localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
-            
-            // 重新渲染历史记录
             renderHistory();
-            
-            // 滚动到结果
             document.getElementById('resultsDisplay').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
-        // 渲染历史记录
+        function calculateBest50() {
+            if (allRecords.length === 0) {
+                alert('没有可计算的历史记录');
+                return;
+            }
+            
+            const bestRecordsBySong = {};
+            allRecords.forEach(record => {
+                if (!bestRecordsBySong[record.songId + record.difficulty] || 
+                    bestRecordsBySong[record.songId + record.difficulty].results.ranking < record.results.ranking) {
+                    bestRecordsBySong[record.songId + record.difficulty] = record;
+                }
+            });
+            
+            const bestRecords = Object.values(bestRecordsBySong).sort((a, b) => b.results.ranking - a.results.ranking);
+            const perfectRecords = bestRecords.filter(record => record.results.acc === 100).slice(0, 5);
+            const otherRecords = bestRecords.filter(record => record.results.acc < 100).slice(0, 45);
+            
+            const allBest50 = [...perfectRecords, ...otherRecords].slice(0, 50);
+            if (allBest50.length === 0) {
+                alert('没有足够的记录来计算Best50');
+                return;
+            }
+
+            const avgAcc = allBest50.reduce((sum, record) => sum + record.results.acc, 0) / allBest50.length;
+            const avgRanking = allBest50.reduce((sum, record) => sum + record.results.ranking, 0) / allBest50.length;
+
+            document.getElementById('best50PerfectCount').textContent = perfectRecords.length;
+            document.getElementById('best50OtherCount').textContent = otherRecords.length;
+            document.getElementById('best50AvgAcc').textContent = avgAcc.toFixed(2) + '%';
+            document.getElementById('best50AvgRanking').textContent = avgRanking.toFixed(2);
+            document.getElementById('best50Results').style.display = 'grid';
+
+            const detailsBody = document.getElementById('best50DetailsBody');
+            detailsBody.innerHTML = '';
+            
+            allBest50.forEach((record, index) => {
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                
+                row.innerHTML = `
+                    <td>${record.songTitle}</td>
+                    <td><span class="badge ${record.difficulty}">${record.difficulty} (Lv.${record.playLevel})</span></td>
+                    <td>${record.results.acc}%</td>
+                    <td>${record.results.ranking.toFixed(2)}</td>
+                    <td>${record.date}</td>
+                `;
+                
+                detailsBody.appendChild(row);
+            });
+            
+            document.getElementById('best50Details').style.display = 'block';
+            document.getElementById('best50Results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
         function renderHistory() {
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
@@ -35580,69 +35889,185 @@
                 return;
             }
             
-            // 显示清除所有按钮
             document.getElementById('clearAllContainer').style.display = 'block';
             
-            // 按日期倒序排列
-            const sortedRecords = [...allRecords].sort((a, b) => b.id - a.id);
+            const sortBy = document.getElementById('sortBy').value;
+            let sortedRecords = [...allRecords];
             
+            switch(sortBy) {
+                case 'date-desc':
+                    sortedRecords.sort((a, b) => b.id - a.id);
+                    break;
+                case 'date-asc':
+                    sortedRecords.sort((a, b) => a.id - b.id);
+                    break;
+                case 'title-asc':
+                    sortedRecords.sort((a, b) => a.songTitle.localeCompare(b.songTitle));
+                    break;
+                case 'title-desc':
+                    sortedRecords.sort((a, b) => b.songTitle.localeCompare(a.songTitle));
+                    break;
+                case 'ranking-desc':
+                    sortedRecords.sort((a, b) => b.results.ranking - a.results.ranking);
+                    break;
+                case 'ranking-asc':
+                    sortedRecords.sort((a, b) => a.results.ranking - b.results.ranking);
+                    break;
+            }
+            
+            const groupedRecords = {};
             sortedRecords.forEach(record => {
-                const item = document.createElement('div');
-                item.className = 'history-item fade-in';
+                if (!groupedRecords[record.songId]) {
+                    groupedRecords[record.songId] = {
+                        songTitle: record.songTitle,
+                        artist: record.artist,
+                        records: []
+                    };
+                }
+                groupedRecords[record.songId].records.push(record);
+            });
+
+            Object.values(groupedRecords).forEach(group => {
+                const groupElement = document.createElement('div');
+                groupElement.className = 'song-group';
                 
-                item.innerHTML = `
-                    <div class="history-header">
-                        <div class="history-title">${record.songTitle} - ${record.artist}</div>
-                        <div class="history-date">${record.date}</div>
+                groupElement.innerHTML = `
+                    <div class="song-group-header" onclick="toggleGroup(this.parentElement)">
+                        <div class="song-group-title">${group.songTitle} - ${group.artist}</div>
+                        <div class="song-group-count">${group.records.length} 条记录</div>
                     </div>
-                    <div class="history-details">
-                        <div class="history-detail">
-                            <span class="history-detail-label">难度:</span>
-                            <span class="badge ${record.difficulty}">${record.difficulty} (Lv.${record.playLevel})</span>
-                        </div>
-                        <div class="history-detail">
-                            <span class="history-detail-label">物量:</span>
-                            ${record.totalNotes}
-                        </div>
-                        <div class="history-detail">
-                            <span class="history-detail-label">ACC:</span>
-                            ${record.results.acc}%
-                        </div>
-                        <div class="history-detail">
-                            <span class="history-detail-label">Ranking:</span>
-                            ${record.results.ranking.toFixed(2)}
-                        </div>
-                        <div class="history-detail">
-                            <span class="history-detail-label">判定:</span>
-                            P:${record.judgements.perfect} G:${record.judgements.great} GD:${record.judgements.good} B:${record.judgements.bad} M:${record.judgements.miss}
-                        </div>
-                    </div>
-                    <div class="history-actions">
-                        <button class="danger history-action-btn" onclick="deleteHistoryItem(${record.id})">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                            删除
-                        </button>
-                    </div>
+                    <div class="song-group-content"></div>
                 `;
                 
-                historyList.appendChild(item);
+                const contentElement = groupElement.querySelector('.song-group-content');
+                
+                group.records.forEach(record => {
+                    const container = document.createElement('div');
+                    container.className = 'history-item-container';
+                    container.dataset.recordId = record.id;
+                    
+                    container.innerHTML = `
+                        <div class="history-item-slide" data-record-id="${record.id}">
+                            <div class="history-item">
+                                <div class="history-header">
+                                    <div class="history-title">
+                                        <span class="badge ${record.difficulty}">${record.difficulty} (Lv.${record.playLevel})</span>
+                                    </div>
+                                    <div class="history-date">${record.date}</div>
+                                </div>
+                                <div class="history-details">
+                                    <div class="history-detail">
+                                        <span class="history-detail-label">物量:</span>
+                                        ${record.totalNotes}
+                                    </div>
+                                    <div class="history-detail">
+                                        <span class="history-detail-label">ACC:</span>
+                                        ${record.results.acc}%
+                                    </div>
+                                    <div class="history-detail">
+                                        <span class="history-detail-label">Ranking:</span>
+                                        ${record.results.ranking.toFixed(2)}
+                                    </div>
+                                    <div class="history-detail">
+                                        <span class="history-detail-label">判定:</span>
+                                        P:${record.judgements.perfect} G:${record.judgements.great} GD:${record.judgements.good} B:${record.judgements.bad} M:${record.judgements.miss}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-delete-button" onclick="deleteHistoryItem(${record.id})">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </div>
+                    `;
+                    
+                    contentElement.appendChild(container);
+                });
+                
+                historyList.appendChild(groupElement);
+            });
+
+            initSwipeListeners();
+        }
+        
+        function initSwipeListeners() {
+            const sliders = document.querySelectorAll('.history-item-slide');
+            let startX, startY;
+            
+            sliders.forEach(slider => {
+                slider.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    resetOtherSlides(this);
+                });
+                
+                slider.addEventListener('touchmove', function(e) {
+                    if (!startX) return;
+                    
+                    const xDiff = e.touches[0].clientX - startX;
+                    const yDiff = e.touches[0].clientY - startY;
+                    
+                    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                        e.preventDefault();
+                        
+                        if (xDiff > 0) {
+                            this.style.transform = `translateX(0px)`;
+                        } else {
+                            this.style.transform = `translateX(${Math.max(-80, xDiff)}px)`;
+                        }
+                    }
+                });
+
+                slider.addEventListener('touchend', function() {
+                    if (!startX) return;
+                    
+                    const transform = this.style.transform;
+                    const translateX = transform ? parseInt(transform.replace('translateX(', '').replace('px)', '')) : 0;
+                    
+                    if (translateX < -40) {
+                        this.style.transform = 'translateX(-80px)';
+                    } else {
+                        this.style.transform = 'translateX(0)';
+                    }
+                    
+                    startX = null;
+                    startY = null;
+                });
             });
         }
         
-        // 删除单个历史记录
+        function resetOtherSlides(current) {
+            const sliders = document.querySelectorAll('.history-item-slide');
+            sliders.forEach(slider => {
+                if (slider !== current) {
+                    slider.style.transform = 'translateX(0)';
+                }
+            });
+        }
+        
+        function toggleGroup(groupElement) {
+            groupElement.classList.toggle('expanded');
+        }
+        
         function deleteHistoryItem(recordId) {
             if (confirm('确定要删除这条记录吗？')) {
-                allRecords = allRecords.filter(record => record.id !== recordId);
-                localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
-                renderHistory();
-                showNotification('记录已删除');
+                const container = document.querySelector(`.history-item-container[data-record-id="${recordId}"]`);
+                if (container) {
+                    container.classList.add('slide-out');
+                    setTimeout(() => {
+                        allRecords = allRecords.filter(record => record.id !== recordId);
+                        localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
+                        renderHistory();
+                        showNotification('记录已删除');
+                    }, 300);
+                }
             }
         }
         
-        // 清除所有历史记录
         function clearAllHistory() {
             if (confirm('确定要删除所有历史记录吗？此操作不可恢复！')) {
                 allRecords = [];
@@ -35652,7 +36077,6 @@
             }
         }
         
-        // 导出数据为JSON文件
         function exportData() {
             if (allRecords.length === 0) {
                 alert('没有可导出的成绩记录');
@@ -35670,7 +36094,6 @@
             linkElement.click();
         }
         
-        // 导入数据
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -35682,11 +36105,7 @@
                     if (Array.isArray(importedData)) {
                         allRecords = importedData;
                         localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
-                        
-                        // 重新渲染历史记录
                         renderHistory();
-                        
-                        // 显示通知
                         showNotification(`成功导入 ${importedData.length} 条记录`);
                     } else {
                         alert('导入失败: 文件格式不正确');
@@ -35694,12 +36113,11 @@
                 } catch (error) {
                     alert('导入失败: ' + error.message);
                 }
-                event.target.value = ''; // 重置文件输入
+                event.target.value = '';
             };
             reader.readAsText(file);
         }
         
-        // 显示通知
         function showNotification(message) {
             const notification = document.createElement('div');
             notification.style.position = 'fixed';
@@ -35709,21 +36127,18 @@
             notification.style.background = 'var(--primary)';
             notification.style.color = 'white';
             notification.style.borderRadius = '8px';
-            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
             notification.style.zIndex = '1000';
             notification.style.animation = 'fadeIn 0.3s ease-out';
             notification.textContent = message;
-            
             document.body.appendChild(notification);
             
             setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateY(20px)';
-                setTimeout(() => notification.remove(), 300);
+                notification.style.animation = 'slideOut 0.3s ease-out forwards';
+                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
 
-        // 初始化 - 搜索框回车触发搜索
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchMusic();
