@@ -427,7 +427,7 @@
             margin-top: 32px;
         }
         
-        /* --- START: 修复后的历史记录样式 --- */
+        
         .history-item-container {
             position: relative;
             overflow: hidden;
@@ -442,7 +442,7 @@
             width: 100%;
             transition: transform 0.3s ease;
             background: white;
-            z-index: 1; /* 确保滑动项在删除按钮上方 */
+            z-index: 1; 
         }
 
         .history-item {
@@ -452,7 +452,7 @@
             position: relative;
             background: white;
         }
-        /* --- END: 修复后的历史记录样式 --- */
+        
 
         .history-item:hover {
             background: rgba(166, 124, 197, 0.03);
@@ -494,11 +494,11 @@
             margin-right: 4px;
         }
 
-        /* --- START: 修复后的删除按钮样式 --- */
+        
         .history-delete-button {
             position: absolute;
             top: 0;
-            right: 0; /* 修改: 从 -80px 改为 0 */
+            right: 0; 
             width: 80px;
             height: 100%;
             background: var(--error);
@@ -507,9 +507,9 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 0; /* 修改: 确保在滑动项下方 */
+            z-index: 0; 
         }
-        /* --- END: 修复后的删除按钮样式 --- */
+        
 
         .history-delete-button:hover {
             background: #ff5252;
@@ -777,7 +777,7 @@
             
             .history-delete-button {
                 width: 70px;
-                /* right: -70px; (此行已无效) */
+                
             }
         }
     </style>
@@ -786,25 +786,6 @@
     <div class="container">
         <header class="fade-in">
             <h1>PJSK ACC&Ranking计算器</h1>
-            <div class="header-actions">
-                <button class="secondary" onclick="exportData()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    导出成绩数据备份
-                </button>
-                <button class="secondary" onclick="document.getElementById('fileInput').click()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    导入成绩数据备份
-                    <input type="file" id="fileInput" class="file-input" accept=".json" onchange="importData(event)">
-                </button>
-            </div>
         </header>
         
         <div class="card fade-in">
@@ -886,7 +867,7 @@
             <div class="divider"></div>
             
             <div style="margin-top: 16px;">
-                <h3>输入判定数据</h3>
+                <h3>输入判定结果</h3>
                 <div class="input-row">
                     <div class="input-group">
                         <label for="perfectInput">Perfect</label>
@@ -1028,6 +1009,40 @@
             </div>
         </div>
     </div>
+        
+        <!-- 在历史记录卡片后面添加这个新卡片 -->
+        <div class="card fade-in" id="dataTransferContainer">
+            <h2>数据备份与恢复</h2>
+            <p>导出您的历史记录数据或从备份文件恢复</p>
+            
+            <div class="data-actions">
+                <button class="secondary" onclick="exportData()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    导出数据
+                </button>
+                
+                <button class="primary" onclick="document.getElementById('importFile').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    导入数据
+                </button>
+                
+                <input type="file" id="importFile" class="file-input" accept=".json" onchange="importData(this)">
+            </div>
+            
+            <div id="dataTransferStatus" style="margin-top: 16px; display: none;" class="fade-in">
+                <div class="result-item">
+                    <div id="transferMessage" class="result-label"></div>
+                </div>
+            </div>
+        </div>
 
     <script>     
         const musics = [
@@ -36077,47 +36092,6 @@
             }
         }
         
-        function exportData() {
-            if (allRecords.length === 0) {
-                alert('没有可导出的成绩记录');
-                return;
-            }
-            
-            const dataStr = JSON.stringify(allRecords, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `音乐游戏成绩记录_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        }
-        
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (Array.isArray(importedData)) {
-                        allRecords = importedData;
-                        localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
-                        renderHistory();
-                        showNotification(`成功导入 ${importedData.length} 条记录`);
-                    } else {
-                        alert('导入失败: 文件格式不正确');
-                    }
-                } catch (error) {
-                    alert('导入失败: ' + error.message);
-                }
-                event.target.value = '';
-            };
-            reader.readAsText(file);
-        }
-        
         function showNotification(message) {
             const notification = document.createElement('div');
             notification.style.position = 'fixed';
@@ -36138,7 +36112,84 @@
                  setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
+        
+        function exportData() {
+            if (allRecords.length === 0) {
+                showTransferMessage('没有可导出的数据', 'error');
+                return;
+            }
+            
+            const data = {
+                version: 1,
+                records: allRecords,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `PJSK_Records_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showTransferMessage('数据导出成功', 'success');
+        }
+        
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (!data.records || !Array.isArray(data.records)) {
+                        throw new Error('无效的数据格式');
+                    }
+                    
+                    // 验证导入的数据结构
+                    const isValid = data.records.every(record => 
+                        record.songId && record.songTitle && record.results && record.results.acc !== undefined
+                    );
+                    
+                    if (!isValid) {
+                        throw new Error('数据格式不正确');
+                    }
+                    
+                    if (confirm(`确定要导入 ${data.records.length} 条记录吗？这将覆盖当前的历史记录！`)) {
+                        allRecords = data.records;
+                        localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
+                        renderHistory();
+                        showTransferMessage(`成功导入 ${data.records.length} 条记录`, 'success');
+                    }
+                } catch (error) {
+                    console.error('导入失败:', error);
+                    showTransferMessage('导入失败: ' + error.message, 'error');
+                }
+                
+                // 重置文件输入
+                input.value = '';
+            };
+            
+            reader.readAsText(file);
+        }
 
+function showTransferMessage(message, type) {
+    const statusElement = document.getElementById('dataTransferStatus');
+    const messageElement = document.getElementById('transferMessage');
+    
+    messageElement.textContent = message;
+    messageElement.style.color = type === 'success' ? 'var(--secondary)' : 'var(--error)';
+    
+    statusElement.style.display = 'block';
+    setTimeout(() => {
+        statusElement.style.display = 'none';
+    }, 3000);
+}
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchMusic();
