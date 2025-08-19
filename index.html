@@ -1,0 +1,2274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PJSK ACC&Ranking计算器</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9IiNBNjdDQzUiLz4KPHBhdGggZD0iTTM1IDM1VjY1SDY1VjM1SDM1Wk00MCA0MEg2MFY2MEg0MFY0MFpNNDUgNDVINTVWNTVINDVWNDVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMzAgMzBWNzBINzBWMzBIMzBaTTM1IDM1SDY1VjY1SDM1VjM1WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4yIi8+Cjwvc3ZnPgo=">
+    
+    <style>
+        :root {
+            --primary: #a67cc5;
+            --primary-light: #b38fcf;
+            --primary-dark: #7e5a9c;
+            --secondary: #4cb87a;
+            --secondary-light: #5ec48d;
+            --secondary-dark: #3d9e65;
+            --accent: #f18abb;
+            --accent-light: #f8a5c9;
+            --accent-dark: #e06ea3;
+            --background: linear-gradient(135deg, #e8d1f0 0%, #d9f0fa 50%, #fce6ed 100%);
+            --surface: rgba(255, 255, 255, 0.95);
+            --error: #ff6b6b;
+            --on-primary: #ffffff;
+            --on-secondary: #ffffff;
+            --on-accent: #ffffff;
+            --on-background: #34495e;
+            --on-surface: #3a506b;
+            --on-error: #ffffff;
+            --divider: rgba(0, 0, 0, 0.08);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glow: 0 0 15px rgba(166, 124, 197, 0.2);
+            --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.98) 0%, rgba(250,250,250,0.98) 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--on-background);
+            background: var(--background);
+            background-attachment: fixed;
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: linear-gradient(145deg, #a67cc5, #f18abb);
+            color: var(--on-primary);
+            border-radius: 16px;
+            box-shadow: var(--shadow), var(--glow);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg, 
+                rgba(255,255,255,0.15) 0%, 
+                rgba(255,255,255,0) 100%
+            );
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(90deg, #ffffff, #f8d883);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .card {
+            background: var(--card-gradient);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), var(--glow);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary-dark);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .search-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .compact-input {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--on-surface);
+            opacity: 0.8;
+        }
+
+        input, select {
+            padding: 12px 16px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--on-surface);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(166, 124, 197, 0.15);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--on-primary);
+            border: none;
+        }
+
+        button.primary:hover {
+            background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(166, 124, 197, 0.2);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+            color: var(--on-secondary);
+            border: none;
+        }
+
+        button.secondary:hover {
+            background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 184, 122, 0.2);
+        }
+
+        button.outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background: rgba(166, 124, 197, 0.08);
+        }
+
+        button.danger {
+            background: transparent;
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        button.danger:hover {
+            background: rgba(255, 107, 107, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        th {
+            background: rgba(166, 124, 197, 0.08);
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: rgba(166, 124, 197, 0.03);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            color: white;
+        }
+
+        .badge.easy {
+            background: #65DA82;
+        }
+
+        .badge.normal {
+            background: #4BC3FF;
+        }
+
+        .badge.hard {
+            background: #F9CD4A;
+        }
+
+        .badge.expert {
+            background: #ED527A;
+        }
+
+        .badge.master {
+            background: #B03EEE;
+        }
+
+        .badge.append {
+            background: linear-gradient(135deg, #AC98F7, #ED88D4);
+            color: white;
+            box-shadow: 0 2px 6px rgba(172, 152, 247, 0.3);
+        }
+
+        .difficulty-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+            padding: 24px;
+            background: linear-gradient(145deg, rgba(166, 124, 197, 0.05), rgba(248, 216, 131, 0.05));
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .result-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 8px 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-unit {
+            font-size: 0.85rem;
+            color: var(--on-surface);
+            opacity: 0.7;
+        }
+
+        .data-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .song-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .song-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+
+        .song-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .song-artist {
+            font-size: 1rem;
+            color: var(--on-surface);
+            opacity: 0.8;
+        }
+
+        .song-notes {
+            font-size: 0.9rem;
+            color: var(--on-surface);
+            opacity: 0.7;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--divider), transparent);
+            margin: 24px 0;
+            border: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--on-surface);
+            opacity: 0.6;
+        }
+
+        .history-container {
+            margin-top: 32px;
+        }
+        
+        
+        .history-item-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .history-item-slide {
+            position: relative;
+            width: 100%;
+            transition: transform 0.3s ease;
+            background: white;
+            z-index: 1; 
+        }
+
+        .history-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--divider);
+            transition: var(--transition);
+            position: relative;
+            background: white;
+        }
+        
+
+        .history-item:hover {
+            background: rgba(166, 124, 197, 0.03);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .history-title {
+            font-weight: 500;
+            color: var(--primary-dark);
+            max-width: calc(100% - 120px);
+        }
+
+        .history-date {
+            font-size: 0.85rem;
+            color: var(--on-surface);
+            opacity: 0.7;
+        }
+
+        .history-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .history-detail {
+            font-size: 0.9rem;
+        }
+
+        .history-detail-label {
+            font-weight: 500;
+            color: var(--primary);
+            margin-right: 4px;
+        }
+
+        
+        .history-delete-button {
+            position: absolute;
+            top: 0;
+            right: 0; 
+            width: 80px;
+            height: 100%;
+            background: var(--error);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 0; 
+        }
+        
+
+        .history-delete-button:hover {
+            background: #ff5252;
+        }
+
+        .history-clear-all {
+            margin-top: 16px;
+            text-align: right;
+        }
+
+        .song-group {
+            margin-bottom: 24px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .song-group-header {
+            background: rgba(166, 124, 197, 0.08);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .song-group-title {
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+
+        .song-group-count {
+            font-size: 0.85rem;
+            color: var(--on-surface);
+            opacity: 0.7;
+        }
+
+        .song-group-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .song-group.expanded .song-group-content {
+            max-height: 2000px;
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .sort-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--on-surface);
+            opacity: 0.8;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--on-surface);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .best50-container {
+            margin-top: 32px;
+        }
+
+        .best50-card {
+            background: var(--card-gradient);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .best50-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .best50-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .best50-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(250,250,250,0.95));
+            border-radius: 12px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .best50-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .best50-item-title {
+            font-weight: 500;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .best50-item-difficulty {
+            font-size: 0.8rem;
+            color: var(--on-surface);
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .best50-item-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 6px; /* Reduced from 8px */
+            flex-wrap: wrap;
+        }
+        
+        .page-button {
+            padding: 6px 10px; /* Reduced from 8px 12px */
+            border: 1px solid var(--divider);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 32px; /* Reduced from 36px */
+            text-align: center;
+            font-size: 0.85rem; /* Added to make text smaller */
+        }
+        
+        .page-button:hover {
+            background: rgba(166, 124, 197, 0.1);
+        }
+        
+        .page-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .page-input {
+            width: 50px; /* Reduced from 60px */
+            padding: 6px; /* Reduced from 8px */
+            text-align: center;
+            border: 1px solid var(--divider);
+            border-radius: 6px;
+            font-size: 0.85rem; /* Added to make text smaller */
+        }
+        
+        .page-jump {
+            display: flex;
+            align-items: center;
+            gap: 6px; /* Reduced from 8px */
+            font-size: 0.85rem; /* Added to make text smaller */
+        }
+        
+        .page-info {
+            font-size: 0.8rem; /* Reduced from 0.9rem */
+            color: var(--on-surface);
+            opacity: 0.8;
+        }
+        
+        .notice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .notice-content {
+            background: var(--card-gradient);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: scaleIn 0.3s ease-out;
+        }
+        
+        .notice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .notice-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+        
+        .notice-body {
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        
+        .notice-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .notice-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .notice-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary), var(--primary-dark));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-100%); opacity: 0; }
+        }
+        
+        .slide-out {
+            animation: slideOut 0.3s ease forwards;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .search-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .compact-input {
+                max-width: 100%;
+            }
+            
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .results {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .data-actions {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .history-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .history-title {
+                max-width: 100%;
+            }
+
+            .sort-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .best50-results {
+                grid-template-columns: 1fr;
+            }
+            
+            .history-delete-button {
+                width: 70px;
+                
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 注意事项弹窗 -->
+    <div id="noticeModal" class="notice-modal" style="display: none;">
+        <div class="notice-content">
+            <div class="notice-header">
+                <h2 class="notice-title">使用须知</h2>
+            </div>
+            <div class="notice-body">
+                <p>欢迎使用PJSK ACC&Ranking计算器！本工具由一条闲鱼罢了开发，在使用前请阅读以下注意事项：</p>
+                <ul style="margin: 12px 0; padding-left: 20px;">
+                    <li>本工具计算结果仅供参考，不代表真实水平</li>                  
+                    <li>您的成绩记录仅保存在本地浏览器中，不会上传到服务器，请注意备份数据</li>
+                </ul>
+                <p>继续使用即表示您已阅读并理解上述内容。</p>
+            </div>
+            <div class="notice-footer">
+                <label class="notice-checkbox">
+                    <input type="checkbox" id="dontShowAgain">
+                    <span>不再显示此提示</span>
+                </label>
+                <div class="notice-buttons">
+                    <button class="primary" style="flex: 1;" onclick="closeNotice()">同意并继续</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <header class="fade-in">
+            <h1>PJSK ACC&Ranking计算器</h1>
+        </header>
+        
+        <div class="card fade-in">
+            <h2>搜索歌曲</h2>
+            <div class="search-options">
+                <div class="input-group">
+                    <label for="searchType">搜索类型</label>
+                    <select id="searchType">
+                        <option value="title">按歌曲名称</option>
+                        <option value="artist">按作者</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="difficultyFilter">难度筛选</label>
+                    <select id="difficultyFilter">
+                        <option value="all">全部难度</option>
+                        <option value="easy">Easy</option>
+                        <option value="normal">Normal</option>
+                        <option value="hard">Hard</option>
+                        <option value="expert">Expert</option>
+                        <option value="master">Master</option>
+                        <option value="append">Append</option>
+                    </select>
+                </div>
+                    <div class="input-group">
+                    <label for="serverSelect">服务器</label>
+                    <select id="serverSelect" onchange="changeServer()">
+                        <option value="jp">日服</option>
+                        <option value="kr">韩服</option>
+                        <option value="en">国际服</option>
+                        <option value="cn">简中服</option>
+                        <option value="tw">繁中服</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="输入搜索内容..." class="compact-input">
+                <button class="primary" onclick="searchMusic()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    搜索
+                </button>
+            </div>
+            
+            <div id="resultsContainer">
+                <h3>歌曲列表</h3>
+                <div style="overflow-x: auto;">
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>歌曲名称</th>
+                                <th>作者</th>
+                                <th>难度</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody"></tbody>
+                    </table>
+                </div>
+                <div id="noResults" class="empty-state" style="display: none;">
+                    没有找到匹配的歌曲
+                </div>
+            </div>
+        </div>
+        
+        <div class="card fade-in" id="calculatorContainer" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div class="song-info">
+                    <div class="song-title" id="selectedSongTitle"></div>
+                    <div class="song-meta">
+                        <div class="song-artist" id="selectedArtist"></div>
+                        <span id="selectedDifficulty" class="badge"></span>
+                        <span id="chartConstant">谱面定数: -</span>
+                        <span class="song-notes" id="totalNotes">物量: -</span>
+                    </div>
+                </div>
+                <button class="outline" onclick="resetSelection()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    选择其他歌曲
+                </button>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div style="margin-top: 16px;">
+                <h3>输入判定结果</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="perfectInput">Perfect</label>
+                        <input type="number" id="perfectInput" min="0" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="greatInput">Great</label>
+                        <input type="number" id="greatInput" min="0" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="goodInput">Good</label>
+                        <input type="number" id="goodInput" min="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="badInput">Bad</label>
+                        <input type="number" id="badInput" min="0" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="missInput">Miss</label>
+                        <input type="number" id="missInput" min="0" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="constantInput">谱面定数</label>
+                        <input type="number" id="constantInput" step="0.1" placeholder="0">
+                    </div>
+                </div>
+                
+                <button class="primary" style="width: 100%; padding: 16px; margin-top: 8px;" onclick="calculate()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                    计算成绩
+                </button>
+                
+                <div class="results fade-in" id="resultsDisplay" style="display: none;">
+                    <div class="result-item">
+                        <div class="result-label">准确率</div>
+                        <div id="accResult" class="result-value">-</div>
+                        <div class="result-unit">ACC</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">单曲评分</div>
+                        <div id="rankingResult" class="result-value">-</div>
+                        <div class="result-unit">Ranking</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card best50-container fade-in">
+            <h2>Best50计算</h2>
+            <p>根据您的历史记录计算Best50成绩（5首ACC100和45首其他最佳成绩的平均值）</p>
+            
+            <div class="best50-header">
+                <h3>计算结果</h3>
+                <button class="primary" onclick="calculateBest50()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    计算Best50
+                </button>
+            </div>
+            
+            <div class="best50-results" id="best50Results" style="display: none;">
+                <div class="best50-item">
+                    <div class="best50-item-title">ACC100歌曲</div>
+                    <div class="best50-item-difficulty">5首最佳成绩</div>
+                    <div id="best50PerfectCount" class="best50-item-value">0</div>
+                </div>
+                <div class="best50-item">
+                    <div class="best50-item-title">其他歌曲</div>
+                    <div class="best50-item-difficulty">45首最佳成绩</div>
+                    <div id="best50OtherCount" class="best50-item-value">0</div>
+                </div>
+                <div class="best50-item">
+                    <div class="best50-item-title">平均ACC</div>
+                    <div class="best50-item-difficulty">所有50首歌曲</div>
+                    <div id="best50AvgAcc" class="best50-item-value">0%</div>
+                </div>
+                <div class="best50-item">
+                    <div class="best50-item-title">平均Ranking</div>
+                    <div class="best50-item-difficulty">所有50首歌曲</div>
+                    <div id="best50AvgRanking" class="best50-item-value">0.00</div>
+                </div>
+            </div>
+            
+            <div id="best50Details" style="margin-top: 24px; display: none;">
+                <h3>详细记录</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>歌曲名称</th>
+                                <th>难度</th>
+                                <th>ACC</th>
+                                <th>Ranking</th>
+                                <th>日期</th>
+                            </tr>
+                        </thead>
+                        <tbody id="best50DetailsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card fade-in history-container" id="historyContainer">
+            <h2>历史记录</h2>
+            
+            <div class="sort-options">
+                <span class="sort-label">排序方式:</span>
+                <select id="sortBy" class="sort-select" onchange="renderHistory()">
+                    <option value="date-desc">按日期 (最新)</option>
+                    <option value="date-asc">按日期 (最早)</option>
+                    <option value="title-asc">按歌曲名称 (A-Z)</option>
+                    <option value="title-desc">按歌曲名称 (Z-A)</option>
+                    <option value="ranking-desc">按评分 (最高)</option>
+                    <option value="ranking-asc">按评分 (最低)</option>
+                </select>
+            </div>
+            
+            <div id="historyList"></div>
+            <div class="history-clear-all" id="clearAllContainer" style="display: none;">
+                <button class="danger" onclick="clearAllHistory()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                    清除所有历史记录
+                </button>
+            </div>
+        </div>
+    </div>
+        
+        <!-- 在历史记录卡片后面添加这个新卡片 -->
+        <div class="card fade-in" id="dataTransferContainer">
+            <h2>数据备份与恢复</h2>
+            <p>导出您的历史记录数据或从备份文件恢复</p>
+            
+            <div class="data-actions">
+                <button class="secondary" onclick="exportData()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    导出数据
+                </button>
+                
+                <button class="primary" onclick="document.getElementById('importFile').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    导入数据
+                </button>
+                
+                <input type="file" id="importFile" class="file-input" accept=".json" onchange="importData(this)">
+            </div>
+            
+            <div id="dataTransferStatus" style="margin-top: 16px; display: none;" class="fade-in">
+                <div class="result-item">
+                    <div id="transferMessage" class="result-label"></div>
+                </div>
+            </div>
+        </div>
+
+    <script>     
+        function showNotice() {
+           
+            const dontShow = localStorage.getItem('dontShowNotice');
+            if (dontShow === 'true') {
+                return;
+            }
+            
+            const modal = document.getElementById('noticeModal');
+            modal.style.display = 'flex';
+            
+           
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeNotice();
+                }
+            });
+        }
+        
+        function closeNotice() {
+            const modal = document.getElementById('noticeModal');
+            const dontShowAgain = document.getElementById('dontShowAgain').checked;
+            
+            if (dontShowAgain) {
+                localStorage.setItem('dontShowNotice', 'true');
+            }
+            
+            modal.style.animation = 'fadeOut 0.3s ease-out forwards';
+            
+           
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; visibility: hidden; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+        
+        let musics = [];
+        let difficulties = [];
+        
+        const GITHUB_BASE_URLS = {
+            'jp': 'https://raw.githubusercontent.com/Team-Haruki/haruki-sekai-master/refs/heads/main/master/',
+            'kr': 'https://raw.githubusercontent.com/Team-Haruki/haruki-sekai-kr-master/refs/heads/main/master/',
+            'en': 'https://raw.githubusercontent.com/Team-Haruki/haruki-sekai-en-master/refs/heads/main/master/',
+            'cn': 'https://raw.githubusercontent.com/Team-Haruki/haruki-sekai-sc-master/refs/heads/main/master/',
+            'tw': 'https://raw.githubusercontent.com/Team-Haruki/haruki-sekai-tc-master/refs/heads/main/master/'
+        };
+        
+        let currentServer = 'jp';
+        let dataLoaded = false;        
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+           
+            showLoadingState();
+            
+            try {
+               
+                await loadDataFromGitHub();
+                dataLoaded = true;
+                
+               
+                displayAllSongs(1);
+                renderHistory();
+                initSwipeListeners();
+                
+               
+                hideLoadingState();
+            } catch (error) {
+                console.error('数据加载失败:', error);
+                showErrorState('数据加载失败，请检查网络连接或稍后重试');
+            }
+        });
+        
+       
+        async function loadDataFromGitHub() {
+            try {
+                const GITHUB_BASE_URL = GITHUB_BASE_URLS[currentServer];
+                const [musicResponse, difficultyResponse] = await Promise.all([
+                    fetch(`${GITHUB_BASE_URL}musics.json`),
+                    fetch(`${GITHUB_BASE_URL}musicDifficulties.json`)
+                ]);
+        
+                if (!musicResponse.ok || !difficultyResponse.ok) {
+                    throw new Error('网络响应不正常');
+                }
+        
+                musics = await musicResponse.json();
+                difficulties = await difficultyResponse.json();
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                throw error;
+            }
+        }
+
+        async function changeServer() {
+            const serverSelect = document.getElementById('serverSelect');
+            currentServer = serverSelect.value;
+            dataLoaded = false;
+            showLoadingState();
+        
+            try {
+                await loadDataFromGitHub();
+                dataLoaded = true;
+                displayAllSongs(1);
+                hideLoadingState();
+            } catch (error) {
+                console.error('数据加载失败:', error);
+                showErrorState('数据加载失败，请检查网络连接或稍后重试');
+            }
+        }
+
+       
+        function showLoadingState() {
+            const resultsBody = document.getElementById('resultsBody');
+            resultsBody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+                            <div style="width: 40px; height: 40px; border: 4px solid var(--divider); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                            <div>正在加载数据...</div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+           
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+       
+        function hideLoadingState() {
+           
+        }
+        
+       
+        function showErrorState(message) {
+            const resultsBody = document.getElementById('resultsBody');
+            resultsBody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; color: var(--error);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            <div>${message}</div>
+                            <button class="primary" onclick="location.reload()" style="margin-top: 16px;">
+                                重新加载
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        let currentSelectedSong = null;
+        let currentSelectedDifficulty = null;
+        let allRecords = JSON.parse(localStorage.getItem('musicGameRecords')) || [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            displayAllSongs();
+            renderHistory();
+            initSwipeListeners();
+            showNotice();
+        });
+
+        function displayAllSongs() {
+            const resultsBody = document.getElementById('resultsBody');
+            resultsBody.innerHTML = '';
+            
+            const songsWithDifficulties = {};
+            musics.forEach(music => {
+                songsWithDifficulties[music.id] = {
+                    ...music,
+                    difficulties: difficulties.filter(diff => diff.musicId === music.id)
+                };
+            });
+
+            let hasResults = false;
+            Object.values(songsWithDifficulties).forEach(song => {
+                if (song.difficulties.length > 0) {
+                    hasResults = true;
+                    const row = document.createElement('tr');
+                    row.className = 'fade-in';
+           
+                    const difficultyBadges = song.difficulties.map(diff => {
+                        return `<span class="badge ${diff.musicDifficulty}">Lv.${diff.playLevel}</span>`;
+                    }).join(' ');
+                    
+                    row.innerHTML = `
+                        <td>${song.title}</td>
+                        <td>${song.composer}</td>
+                        <td>
+                            <div class="difficulty-group">
+                                ${difficultyBadges}
+                            </div>
+                        </td>
+                        <td>
+                            <button class="outline" style="padding: 8px 12px;" onclick="showDifficulties(${song.id})">
+                                选择难度
+                            </button>
+                        </td>
+                    `;
+                    resultsBody.appendChild(row);
+                }
+            });
+            
+            document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+        }
+
+        function showDifficulties(musicId) {
+            const song = musics.find(m => m.id === musicId);
+            const songDifficulties = difficulties.filter(diff => diff.musicId === musicId);
+            
+            const resultsBody = document.getElementById('resultsBody');
+            resultsBody.innerHTML = '';
+            
+            songDifficulties.forEach(diff => {
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                
+                row.innerHTML = `
+                    <td>${song.title}</td>
+                    <td>${song.composer}</td>
+                    <td><span class="badge ${diff.musicDifficulty}">Lv.${diff.playLevel}</span></td>
+                    <td>
+                        <button class="outline" style="padding: 8px 12px;" onclick="selectSong(${song.id}, '${diff.musicDifficulty}')">
+                            选择
+                        </button>
+                    </td>
+                `;
+                
+                resultsBody.appendChild(row);
+            });
+        }
+
+        let currentPage = 1;
+        const recordsPerPage = 20;
+        let currentFilteredSongs = [];
+        
+       
+        function displayAllSongs(page = 1) {
+            currentPage = page;
+            const resultsBody = document.getElementById('resultsBody');
+            resultsBody.innerHTML = '';
+            
+            const songsWithDifficulties = {};
+            musics.forEach(music => {
+                songsWithDifficulties[music.id] = {
+                    ...music,
+                    difficulties: difficulties.filter(diff => diff.musicId === music.id)
+                };
+            });
+
+            currentFilteredSongs = Object.values(songsWithDifficulties).filter(song => song.difficulties.length > 0);
+            
+           
+            const startIndex = (page - 1) * recordsPerPage;
+            const endIndex = Math.min(startIndex + recordsPerPage, currentFilteredSongs.length);
+            const paginatedSongs = currentFilteredSongs.slice(startIndex, endIndex);
+            
+            let hasResults = false;
+            paginatedSongs.forEach(song => {
+                hasResults = true;
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+           
+                const difficultyBadges = song.difficulties.map(diff => {
+                    return `<span class="badge ${diff.musicDifficulty}">Lv.${diff.playLevel}</span>`;
+                }).join(' ');
+                
+                row.innerHTML = `
+                    <td>${song.title}</td>
+                    <td>${song.composer}</td>
+                    <td>
+                        <div class="difficulty-group">
+                            ${difficultyBadges}
+                        </div>
+                    </td>
+                    <td>
+                        <button class="outline" style="padding: 8px 12px;" onclick="showDifficulties(${song.id})">
+                            选择难度
+                        </button>
+                    </td>
+                `;
+                resultsBody.appendChild(row);
+            });
+            
+            document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+            renderPagination();
+        }
+        
+       
+        function searchMusic(page = 1) {
+            currentPage = page;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const searchType = document.getElementById('searchType').value;
+            const difficultyFilter = document.getElementById('difficultyFilter').value;
+            
+            const resultsBody = document.getElementById('resultsBody');
+            resultsBody.innerHTML = '';
+
+            if (!searchTerm && difficultyFilter === 'all') {
+                displayAllSongs(page);
+                return;
+            }
+            
+            let filteredMusics = musics;
+            if (searchTerm) {
+                filteredMusics = musics.filter(music => {
+                    if (searchType === 'artist') {
+                        return music.composer.toLowerCase().includes(searchTerm) || 
+                               music.lyricist.toLowerCase().includes(searchTerm) || 
+                               music.arranger.toLowerCase().includes(searchTerm);
+                    } else {
+                       
+                        const titleMatch = music.title.toLowerCase().includes(searchTerm) || 
+                                           music.pronunciation.toLowerCase().includes(searchTerm);
+                    
+                       
+                        const infosMatch = music.infos && music.infos.some(info => 
+                            info.title && info.title.toLowerCase().includes(searchTerm)
+                        );
+                    
+                        return titleMatch || infosMatch;
+                    }
+                });
+            }
+            
+            const songsWithDifficulties = {};
+            
+            filteredMusics.forEach(music => {
+                let songDifficulties = difficulties.filter(diff => diff.musicId === music.id);
+                
+                if (difficultyFilter !== 'all') {
+                    songDifficulties = songDifficulties.filter(diff => diff.musicDifficulty === difficultyFilter);
+                }
+                
+                if (songDifficulties.length > 0) {
+                    songsWithDifficulties[music.id] = {
+                        ...music,
+                        difficulties: songDifficulties
+                    };
+                }
+            });
+
+            currentFilteredSongs = Object.values(songsWithDifficulties);
+            
+           
+            const startIndex = (page - 1) * recordsPerPage;
+            const endIndex = Math.min(startIndex + recordsPerPage, currentFilteredSongs.length);
+            const paginatedSongs = currentFilteredSongs.slice(startIndex, endIndex);
+            
+            let hasResults = false;
+            paginatedSongs.forEach(song => {
+                hasResults = true;
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                
+                const difficultyBadges = song.difficulties.map(diff => {
+                    return `<span class="badge ${diff.musicDifficulty}">Lv.${diff.playLevel}</span>`;
+                }).join(' ');
+                
+                row.innerHTML = `
+                    <td>${song.title}</td>
+                    <td>${song.composer}</td>
+                    <td>
+                        <div class="difficulty-group">
+                            ${difficultyBadges}
+                        </div>
+                    </td>
+                    <td>
+                        <button class="outline" style="padding: 8px 12px;" onclick="showDifficulties(${song.id})">
+                            选择难度
+                        </button>
+                    </td>
+                `;
+                resultsBody.appendChild(row);
+            });
+            
+            document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+            renderPagination();
+        }
+        
+       
+        function renderPagination() {
+            const totalPages = Math.ceil(currentFilteredSongs.length / recordsPerPage);
+            const paginationContainer = document.getElementById('paginationContainer');
+            
+            if (!paginationContainer) {
+                const container = document.createElement('div');
+                container.id = 'paginationContainer';
+                container.className = 'pagination';
+                document.getElementById('resultsContainer').appendChild(container);
+            } else {
+                paginationContainer.innerHTML = '';
+            }
+            
+            if (totalPages <= 1) return;
+            
+           
+            const pageInfo = document.createElement('div');
+            pageInfo.className = 'page-info';
+            pageInfo.textContent = `共 ${currentFilteredSongs.length} 条记录，第 ${currentPage}/${totalPages} 页`;
+            paginationContainer.appendChild(pageInfo);
+            
+           
+            const prevButton = document.createElement('button');
+            prevButton.className = 'page-button';
+            prevButton.innerHTML = '&laquo;';
+            prevButton.disabled = currentPage === 1;
+            prevButton.onclick = () => {
+                const searchTerm = document.getElementById('searchInput').value;
+                if (searchTerm) {
+                    searchMusic(currentPage - 1);
+                } else {
+                    displayAllSongs(currentPage - 1);
+                }
+            };
+            paginationContainer.appendChild(prevButton);
+            
+           
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            if (startPage > 1) {
+                const firstPageButton = document.createElement('button');
+                firstPageButton.className = 'page-button';
+                firstPageButton.textContent = '1';
+                firstPageButton.onclick = () => {
+                    const searchTerm = document.getElementById('searchInput').value;
+                    if (searchTerm) {
+                        searchMusic(1);
+                    } else {
+                        displayAllSongs(1);
+                    }
+                };
+                paginationContainer.appendChild(firstPageButton);
+                
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    paginationContainer.appendChild(ellipsis);
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = `page-button ${i === currentPage ? 'active' : ''}`;
+                pageButton.textContent = i;
+                pageButton.onclick = () => {
+                    const searchTerm = document.getElementById('searchInput').value;
+                    if (searchTerm) {
+                        searchMusic(i);
+                    } else {
+                        displayAllSongs(i);
+                    }
+                };
+                paginationContainer.appendChild(pageButton);
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    paginationContainer.appendChild(ellipsis);
+                }
+                
+                const lastPageButton = document.createElement('button');
+                lastPageButton.className = 'page-button';
+                lastPageButton.textContent = totalPages;
+                lastPageButton.onclick = () => {
+                    const searchTerm = document.getElementById('searchInput').value;
+                    if (searchTerm) {
+                        searchMusic(totalPages);
+                    } else {
+                        displayAllSongs(totalPages);
+                    }
+                };
+                paginationContainer.appendChild(lastPageButton);
+            }
+            
+           
+            const nextButton = document.createElement('button');
+            nextButton.className = 'page-button';
+            nextButton.innerHTML = '&raquo;';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.onclick = () => {
+                const searchTerm = document.getElementById('searchInput').value;
+                if (searchTerm) {
+                    searchMusic(currentPage + 1);
+                } else {
+                    displayAllSongs(currentPage + 1);
+                }
+            };
+            paginationContainer.appendChild(nextButton);
+            
+           
+            if (totalPages > 5) {
+                const jumpContainer = document.createElement('div');
+                jumpContainer.className = 'page-jump';
+                
+                const jumpInput = document.createElement('input');
+                jumpInput.type = 'number';
+                jumpInput.className = 'page-input';
+                jumpInput.min = 1;
+                jumpInput.max = totalPages;
+                jumpInput.value = currentPage;
+                jumpInput.onchange = (e) => {
+                    const page = parseInt(e.target.value);
+                    if (page >= 1 && page <= totalPages) {
+                        const searchTerm = document.getElementById('searchInput').value;
+                        if (searchTerm) {
+                            searchMusic(page);
+                        } else {
+                            displayAllSongs(page);
+                        }
+                    } else {
+                        e.target.value = currentPage;
+                    }
+                };
+                
+                const jumpButton = document.createElement('button');
+                jumpButton.className = 'page-button';
+                jumpButton.textContent = '跳转';
+                jumpButton.onclick = () => {
+                    const page = parseInt(jumpInput.value);
+                    if (page >= 1 && page <= totalPages) {
+                        const searchTerm = document.getElementById('searchInput').value;
+                        if (searchTerm) {
+                            searchMusic(page);
+                        } else {
+                            displayAllSongs(page);
+                        }
+                    }
+                };
+                
+                jumpContainer.appendChild(document.createTextNode('跳至'));
+                jumpContainer.appendChild(jumpInput);
+                jumpContainer.appendChild(document.createTextNode('页'));
+                jumpContainer.appendChild(jumpButton);
+                
+                paginationContainer.appendChild(jumpContainer);
+            }
+        }
+        
+       
+        function resetSelection() {
+            document.getElementById('calculatorContainer').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('resultsBody').innerHTML = '';
+            document.getElementById('noResults').style.display = 'none';
+            displayAllSongs(1);
+        }
+        
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            displayAllSongs(1);
+            renderHistory();
+            initSwipeListeners();
+            showNotice();
+        });
+        
+        
+        function selectSong(musicId, difficulty) {
+            currentSelectedSong = musics.find(m => m.id === musicId);
+            currentSelectedDifficulty = difficulties.find(d => 
+                d.musicId === musicId && d.musicDifficulty === difficulty
+            );
+
+            document.getElementById('selectedSongTitle').textContent = currentSelectedSong.title;
+            document.getElementById('selectedArtist').textContent = currentSelectedSong.composer;
+            
+            const difficultyBadge = document.getElementById('selectedDifficulty');
+            difficultyBadge.textContent = currentSelectedDifficulty.musicDifficulty;
+            difficultyBadge.className = `badge ${difficulty}`;
+            
+            document.getElementById('chartConstant').textContent = `谱面定数: ${currentSelectedDifficulty.playLevel}`;
+            document.getElementById('constantInput').value = currentSelectedDifficulty.playLevel;
+            
+            document.getElementById('totalNotes').textContent = `物量: ${currentSelectedDifficulty.totalNoteCount}`;
+            document.getElementById('calculatorContainer').style.display = 'block';
+            document.getElementById('resultsDisplay').style.display = 'none';
+            
+            ['perfectInput', 'greatInput', 'goodInput', 'badInput', 'missInput'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetSelection() {
+            document.getElementById('calculatorContainer').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('resultsBody').innerHTML = '';
+            document.getElementById('noResults').style.display = 'none';
+            displayAllSongs(1);
+        }
+
+        function calculate() {
+            const perfect = parseInt(document.getElementById('perfectInput').value) || 0;
+            const great = parseInt(document.getElementById('greatInput').value) || 0;
+            const good = parseInt(document.getElementById('goodInput').value) || 0;
+            const bad = parseInt(document.getElementById('badInput').value) || 0;
+            const miss = parseInt(document.getElementById('missInput').value) || 0;
+            const constant = parseFloat(document.getElementById('constantInput').value) || 0;
+
+            const totalNotes = perfect + great + good + bad + miss;
+            if (totalNotes === 0) {
+                alert('请输入至少一个判定数量');
+                return;
+            }
+            
+            const acc = (perfect * 1 + great * 0.75 + good * 0.5 + bad * 0 + miss * 0) / totalNotes;
+            const ranking = Math.pow((100 * acc - 55) / 45, 2) * constant;
+
+            document.getElementById('accResult').textContent = (acc * 100).toFixed(2);
+            document.getElementById('rankingResult').textContent = ranking.toFixed(2);
+            document.getElementById('resultsDisplay').style.display = 'grid';
+            
+            const record = {
+                id: Date.now(),
+                songId: currentSelectedSong.id,
+                songTitle: currentSelectedSong.title,
+                artist: currentSelectedSong.composer,
+                difficulty: currentSelectedDifficulty.musicDifficulty,
+                playLevel: currentSelectedDifficulty.playLevel,
+                totalNotes: currentSelectedDifficulty.totalNoteCount,
+                date: new Date().toLocaleString(),
+                judgements: {
+                    perfect: perfect,
+                    great: great,
+                    good: good,
+                    bad: bad,
+                    miss: miss
+                },
+                results: {
+                    acc: parseFloat((acc * 100).toFixed(2)),
+                    ranking: parseFloat(ranking.toFixed(2))
+                }
+            };
+            
+            allRecords.push(record);
+            localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
+            renderHistory();
+            document.getElementById('resultsDisplay').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function calculateBest50() {
+            if (allRecords.length === 0) {
+                alert('没有可计算的历史记录');
+                return;
+            }
+            
+            const bestRecordsBySong = {};
+            allRecords.forEach(record => {
+                if (!bestRecordsBySong[record.songId + record.difficulty] || 
+                    bestRecordsBySong[record.songId + record.difficulty].results.ranking < record.results.ranking) {
+                    bestRecordsBySong[record.songId + record.difficulty] = record;
+                }
+            });
+            
+            const bestRecords = Object.values(bestRecordsBySong).sort((a, b) => b.results.ranking - a.results.ranking);
+            const perfectRecords = bestRecords.filter(record => record.results.acc === 100).slice(0, 5);
+            const otherRecords = bestRecords.filter(record => record.results.acc < 100).slice(0, 45);
+            
+            const allBest50 = [...perfectRecords, ...otherRecords].slice(0, 50);
+            if (allBest50.length === 0) {
+                alert('没有足够的记录来计算Best50');
+                return;
+            }
+
+            const avgAcc = allBest50.reduce((sum, record) => sum + record.results.acc, 0) / allBest50.length;
+            const avgRanking = allBest50.reduce((sum, record) => sum + record.results.ranking, 0) / allBest50.length;
+
+            document.getElementById('best50PerfectCount').textContent = perfectRecords.length;
+            document.getElementById('best50OtherCount').textContent = otherRecords.length;
+            document.getElementById('best50AvgAcc').textContent = avgAcc.toFixed(2) + '%';
+            document.getElementById('best50AvgRanking').textContent = avgRanking.toFixed(2);
+            document.getElementById('best50Results').style.display = 'grid';
+
+            const detailsBody = document.getElementById('best50DetailsBody');
+            detailsBody.innerHTML = '';
+            
+            allBest50.forEach((record, index) => {
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                
+                row.innerHTML = `
+                    <td>${record.songTitle}</td>
+                    <td><span class="badge ${record.difficulty}">${record.difficulty} (Lv.${record.playLevel})</span></td>
+                    <td>${record.results.acc}%</td>
+                    <td>${record.results.ranking.toFixed(2)}</td>
+                    <td>${record.date}</td>
+                `;
+                
+                detailsBody.appendChild(row);
+            });
+            
+            document.getElementById('best50Details').style.display = 'block';
+            document.getElementById('best50Results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (allRecords.length === 0) {
+                historyList.innerHTML = '<div class="empty-state">暂无历史记录</div>';
+                document.getElementById('clearAllContainer').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('clearAllContainer').style.display = 'block';
+            
+            const sortBy = document.getElementById('sortBy').value;
+            let sortedRecords = [...allRecords];
+            
+            switch(sortBy) {
+                case 'date-desc':
+                    sortedRecords.sort((a, b) => b.id - a.id);
+                    break;
+                case 'date-asc':
+                    sortedRecords.sort((a, b) => a.id - b.id);
+                    break;
+                case 'title-asc':
+                    sortedRecords.sort((a, b) => a.songTitle.localeCompare(b.songTitle));
+                    break;
+                case 'title-desc':
+                    sortedRecords.sort((a, b) => b.songTitle.localeCompare(a.songTitle));
+                    break;
+                case 'ranking-desc':
+                    sortedRecords.sort((a, b) => b.results.ranking - a.results.ranking);
+                    break;
+                case 'ranking-asc':
+                    sortedRecords.sort((a, b) => a.results.ranking - b.results.ranking);
+                    break;
+            }
+            
+            const groupedRecords = {};
+            sortedRecords.forEach(record => {
+                if (!groupedRecords[record.songId]) {
+                    groupedRecords[record.songId] = {
+                        songTitle: record.songTitle,
+                        artist: record.artist,
+                        records: []
+                    };
+                }
+                groupedRecords[record.songId].records.push(record);
+            });
+
+            Object.values(groupedRecords).forEach(group => {
+                const groupElement = document.createElement('div');
+                groupElement.className = 'song-group';
+                
+                groupElement.innerHTML = `
+                    <div class="song-group-header" onclick="toggleGroup(this.parentElement)">
+                        <div class="song-group-title">${group.songTitle} - ${group.artist}</div>
+                        <div class="song-group-count">${group.records.length} 条记录</div>
+                    </div>
+                    <div class="song-group-content"></div>
+                `;
+                
+                const contentElement = groupElement.querySelector('.song-group-content');
+                
+                group.records.forEach(record => {
+                    const container = document.createElement('div');
+                    container.className = 'history-item-container';
+                    container.dataset.recordId = record.id;
+                    
+                    container.innerHTML = `
+                        <div class="history-item-slide" data-record-id="${record.id}">
+                            <div class="history-item">
+                                <div class="history-header">
+                                    <div class="history-title">
+                                        <span class="badge ${record.difficulty}">${record.difficulty} (Lv.${record.playLevel})</span>
+                                    </div>
+                                    <div class="history-date">${record.date}</div>
+                                </div>
+                                <div class="history-details">
+                                    <div class="history-detail">
+                                        <span class="history-detail-label">物量:</span>
+                                        ${record.totalNotes}
+                                    </div>
+                                    <div class="history-detail">
+                                        <span class="history-detail-label">ACC:</span>
+                                        ${record.results.acc}%
+                                    </div>
+                                    <div class="history-detail">
+                                        <span class="history-detail-label">Ranking:</span>
+                                        ${record.results.ranking.toFixed(2)}
+                                    </div>
+                                    <div class="history-detail">
+                                        <span class="history-detail-label">判定:</span>
+                                        P:${record.judgements.perfect} G:${record.judgements.great} GD:${record.judgements.good} B:${record.judgements.bad} M:${record.judgements.miss}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-delete-button" onclick="deleteHistoryItem(${record.id})">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </div>
+                    `;
+                    
+                    contentElement.appendChild(container);
+                });
+                
+                historyList.appendChild(groupElement);
+            });
+
+            initSwipeListeners();
+        }
+        
+        function initSwipeListeners() {
+            const sliders = document.querySelectorAll('.history-item-slide');
+            let startX, startY;
+            
+            sliders.forEach(slider => {
+                slider.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    resetOtherSlides(this);
+                });
+                
+                slider.addEventListener('touchmove', function(e) {
+                    if (!startX) return;
+                    
+                    const xDiff = e.touches[0].clientX - startX;
+                    const yDiff = e.touches[0].clientY - startY;
+                    
+                    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                        e.preventDefault();
+                        
+                        if (xDiff > 0) {
+                            this.style.transform = `translateX(0px)`;
+                        } else {
+                            this.style.transform = `translateX(${Math.max(-80, xDiff)}px)`;
+                        }
+                    }
+                });
+
+                slider.addEventListener('touchend', function() {
+                    if (!startX) return;
+                    
+                    const transform = this.style.transform;
+                    const translateX = transform ? parseInt(transform.replace('translateX(', '').replace('px)', '')) : 0;
+                    
+                    if (translateX < -40) {
+                        this.style.transform = 'translateX(-80px)';
+                    } else {
+                        this.style.transform = 'translateX(0)';
+                    }
+                    
+                    startX = null;
+                    startY = null;
+                });
+            });
+        }
+        
+        function resetOtherSlides(current) {
+            const sliders = document.querySelectorAll('.history-item-slide');
+            sliders.forEach(slider => {
+                if (slider !== current) {
+                    slider.style.transform = 'translateX(0)';
+                }
+            });
+        }
+        
+        function toggleGroup(groupElement) {
+            groupElement.classList.toggle('expanded');
+        }
+        
+        function deleteHistoryItem(recordId) {
+            if (confirm('确定要删除这条记录吗？')) {
+                const container = document.querySelector(`.history-item-container[data-record-id="${recordId}"]`);
+                if (container) {
+                    container.classList.add('slide-out');
+                    setTimeout(() => {
+                        allRecords = allRecords.filter(record => record.id !== recordId);
+                        localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
+                        renderHistory();
+                        showNotification('记录已删除');
+                    }, 300);
+                }
+            }
+        }
+        
+        function clearAllHistory() {
+            if (confirm('确定要删除所有历史记录吗？此操作不可恢复！')) {
+                allRecords = [];
+                localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
+                renderHistory();
+                showNotification('所有记录已删除');
+            }
+        }
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '12px 24px';
+            notification.style.background = 'var(--primary)';
+            notification.style.color = 'white';
+            notification.style.borderRadius = '8px';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+            notification.style.zIndex = '1000';
+            notification.style.animation = 'fadeIn 0.3s ease-out';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out forwards';
+                 setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        async function getIPAddress() {
+            const services = [
+                'https://api.ipify.org?format=json',
+                'https://ipapi.co/json/',
+                'https://ipinfo.io/json',
+                'https://api.myip.com'
+            ];
+            
+            for (const url of services) {
+                try {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data.ip || data.ipAddress || 'unknown';
+                    }
+                } catch (error) {
+                    console.log(`尝试 ${url} 失败:`, error);
+                   
+                }
+            }
+            
+            return 'unknown';
+        }
+    
+        async function exportData() {
+            if (allRecords.length === 0) {
+                showTransferMessage('没有可导出的数据', 'error');
+                return;
+            }
+            
+            try {
+                const ipAddress = await getIPAddress();
+                
+                const data = {
+                    version: 1,
+                    records: allRecords,
+                    exportedAt: new Date().toISOString(),
+                    deviceInfo: {
+                        ipAddress: ipAddress,
+                        userAgent: navigator.userAgent,
+                        platform: navigator.platform
+                    }
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+               
+                const date = new Date();
+                const utc8Time = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+               
+                const formattedTime = utc8Time.toISOString().slice(0, 19);
+                a.download = `PJSK_Records_${formattedTime}.json`;
+
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showTransferMessage('数据导出成功', 'success');
+            } catch (error) {
+                console.error('导出失败:', error);
+                showTransferMessage('导出失败: ' + error.message, 'error');
+            }
+        }
+        
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (!data.records || !Array.isArray(data.records)) {
+                        throw new Error('无效的数据格式');
+                    }
+                    
+                   
+                    const isValid = data.records.every(record => 
+                        record.songId && record.songTitle && record.results && record.results.acc !== undefined
+                    );
+                    
+                    if (!isValid) {
+                        throw new Error('数据格式不正确');
+                    }
+                    
+                    if (confirm(`确定要导入 ${data.records.length} 条记录吗？这将覆盖当前的历史记录！`)) {
+                        allRecords = data.records;
+                        localStorage.setItem('musicGameRecords', JSON.stringify(allRecords));
+                        renderHistory();
+                        showTransferMessage(`成功导入 ${data.records.length} 条记录`, 'success');
+                    }
+                } catch (error) {
+                    console.error('导入失败:', error);
+                    showTransferMessage('导入失败: ' + error.message, 'error');
+                }
+                
+               
+                input.value = '';
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function showTransferMessage(message, type) {
+            const statusElement = document.getElementById('dataTransferStatus');
+            const messageElement = document.getElementById('transferMessage');
+            
+            messageElement.textContent = message;
+            messageElement.style.color = type === 'success' ? 'var(--secondary)' : 'var(--error)';
+            
+            statusElement.style.display = 'block';
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 3000);
+        }
+        
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchMusic(1);
+            }
+        });
+    </script>
+</body>
+  </html>
