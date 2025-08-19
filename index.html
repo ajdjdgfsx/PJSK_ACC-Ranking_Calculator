@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PJSK ACC&Ranking计算器</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9IiNBNjdDQzUiLz4KPHBhdGggZD0iTTM1IDM1VjY1SDY1VjM1SDM1Wk00MCA0MEg2MFY2MEg0MFY0MFpNNDUgNDVINTVWNTVINDVWNDVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMzAgMzBWNzBINzBWMzBIMzBaTTM1IDM1SDY1VjY1SDM1VjM1WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4yIi8+Cjwvc3ZnPgo=">
+    
     <style>
         :root {
             --primary: #a67cc5;
@@ -36,7 +38,7 @@
             margin: 0;
             padding: 0;
         }
-
+        
         body {
             font-family: 'Roboto', 'Noto Sans SC', sans-serif;
             line-height: 1.6;
@@ -712,6 +714,74 @@
             opacity: 0.8;
         }
         
+        .notice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .notice-content {
+            background: var(--card-gradient);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: scaleIn 0.3s ease-out;
+        }
+        
+        .notice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .notice-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+        
+        .notice-body {
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        
+        .notice-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .notice-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .notice-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -836,6 +906,31 @@
     </style>
 </head>
 <body>
+    <!-- 注意事项弹窗 -->
+    <div id="noticeModal" class="notice-modal" style="display: none;">
+        <div class="notice-content">
+            <div class="notice-header">
+                <h2 class="notice-title">使用须知</h2>
+            </div>
+            <div class="notice-body">
+                <p>欢迎使用PJSK ACC&Ranking计算器！在使用前请阅读以下注意事项：</p>
+                <ul style="margin: 12px 0; padding-left: 20px;">
+                    <li>本工具计算结果仅供参考，不代表真实水平</li>                  
+                    <li>您的成绩记录仅保存在本地浏览器中，不会上传到服务器，请注意备份数据</li>
+                </ul>
+                <p>继续使用即表示您已阅读并理解上述内容。</p>
+            </div>
+            <div class="notice-footer">
+                <label class="notice-checkbox">
+                    <input type="checkbox" id="dontShowAgain">
+                    <span>不再显示此提示</span>
+                </label>
+                <div class="notice-buttons">
+                    <button class="primary" style="flex: 1;" onclick="closeNotice()">同意并继续</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <header class="fade-in">
             <h1>PJSK ACC&Ranking计算器</h1>
@@ -1108,6 +1203,49 @@
         </div>
 
     <script>     
+        function showNotice() {
+            // 检查是否已经选择不再显示
+            const dontShow = localStorage.getItem('dontShowNotice');
+            if (dontShow === 'true') {
+                return;
+            }
+            
+            const modal = document.getElementById('noticeModal');
+            modal.style.display = 'flex';
+            
+            // 添加ESC键关闭功能
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeNotice();
+                }
+            });
+        }
+        
+        function closeNotice() {
+            const modal = document.getElementById('noticeModal');
+            const dontShowAgain = document.getElementById('dontShowAgain').checked;
+            
+            if (dontShowAgain) {
+                localStorage.setItem('dontShowNotice', 'true');
+            }
+            
+            modal.style.animation = 'fadeOut 0.3s ease-out forwards';
+            
+            // 添加淡出动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; visibility: hidden; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+        
         let musics = [];
         let difficulties = [];
         
@@ -1242,6 +1380,7 @@
             displayAllSongs();
             renderHistory();
             initSwipeListeners();
+            showNotice();
         });
 
         function displayAllSongs() {
@@ -1643,6 +1782,7 @@
             displayAllSongs(1);
             renderHistory();
             initSwipeListeners();
+            showNotice();
         });
         
         
