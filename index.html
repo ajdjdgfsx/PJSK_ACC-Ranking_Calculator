@@ -658,7 +658,60 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 6px; /* Reduced from 8px */
+            flex-wrap: wrap;
+        }
+        
+        .page-button {
+            padding: 6px 10px; /* Reduced from 8px 12px */
+            border: 1px solid var(--divider);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 32px; /* Reduced from 36px */
+            text-align: center;
+            font-size: 0.85rem; /* Added to make text smaller */
+        }
+        
+        .page-button:hover {
+            background: rgba(166, 124, 197, 0.1);
+        }
+        
+        .page-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .page-input {
+            width: 50px; /* Reduced from 60px */
+            padding: 6px; /* Reduced from 8px */
+            text-align: center;
+            border: 1px solid var(--divider);
+            border-radius: 6px;
+            font-size: 0.85rem; /* Added to make text smaller */
+        }
+        
+        .page-jump {
+            display: flex;
+            align-items: center;
+            gap: 6px; /* Reduced from 8px */
+            font-size: 0.85rem; /* Added to make text smaller */
+        }
+        
+        .page-info {
+            font-size: 0.8rem; /* Reduced from 0.9rem */
+            color: var(--on-surface);
+            opacity: 0.8;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -35681,7 +35734,65 @@
             });
         }
 
-        function searchMusic() {
+        let currentPage = 1;
+        const recordsPerPage = 20;
+        let currentFilteredSongs = [];
+        
+        // 修改displayAllSongs函数
+        function displayAllSongs(page = 1) {
+            currentPage = page;
+            const resultsBody = document.getElementById('resultsBody');
+            resultsBody.innerHTML = '';
+            
+            const songsWithDifficulties = {};
+            musics.forEach(music => {
+                songsWithDifficulties[music.id] = {
+                    ...music,
+                    difficulties: difficulties.filter(diff => diff.musicId === music.id)
+                };
+            });
+
+            currentFilteredSongs = Object.values(songsWithDifficulties).filter(song => song.difficulties.length > 0);
+            
+            // 分页处理
+            const startIndex = (page - 1) * recordsPerPage;
+            const endIndex = Math.min(startIndex + recordsPerPage, currentFilteredSongs.length);
+            const paginatedSongs = currentFilteredSongs.slice(startIndex, endIndex);
+            
+            let hasResults = false;
+            paginatedSongs.forEach(song => {
+                hasResults = true;
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+           
+                const difficultyBadges = song.difficulties.map(diff => {
+                    return `<span class="badge ${diff.musicDifficulty}">Lv.${diff.playLevel}</span>`;
+                }).join(' ');
+                
+                row.innerHTML = `
+                    <td>${song.title}</td>
+                    <td>${song.composer}</td>
+                    <td>
+                        <div class="difficulty-group">
+                            ${difficultyBadges}
+                        </div>
+                    </td>
+                    <td>
+                        <button class="outline" style="padding: 8px 12px;" onclick="showDifficulties(${song.id})">
+                            选择难度
+                        </button>
+                    </td>
+                `;
+                resultsBody.appendChild(row);
+            });
+            
+            document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+            renderPagination();
+        }
+        
+        // 修改searchMusic函数
+        function searchMusic(page = 1) {
+            currentPage = page;
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const searchType = document.getElementById('searchType').value;
             const difficultyFilter = document.getElementById('difficultyFilter').value;
@@ -35690,7 +35801,7 @@
             resultsBody.innerHTML = '';
 
             if (!searchTerm && difficultyFilter === 'all') {
-                displayAllSongs();
+                displayAllSongs(page);
                 return;
             }
             
@@ -35708,7 +35819,6 @@
                 });
             }
             
-            let hasResults = false;
             const songsWithDifficulties = {};
             
             filteredMusics.forEach(music => {
@@ -35726,7 +35836,15 @@
                 }
             });
 
-            Object.values(songsWithDifficulties).forEach(song => {
+            currentFilteredSongs = Object.values(songsWithDifficulties);
+            
+            // 分页处理
+            const startIndex = (page - 1) * recordsPerPage;
+            const endIndex = Math.min(startIndex + recordsPerPage, currentFilteredSongs.length);
+            const paginatedSongs = currentFilteredSongs.slice(startIndex, endIndex);
+            
+            let hasResults = false;
+            paginatedSongs.forEach(song => {
                 hasResults = true;
                 const row = document.createElement('tr');
                 row.className = 'fade-in';
@@ -35753,8 +35871,193 @@
             });
             
             document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+            renderPagination();
         }
-
+        
+        // 添加分页渲染函数
+        function renderPagination() {
+            const totalPages = Math.ceil(currentFilteredSongs.length / recordsPerPage);
+            const paginationContainer = document.getElementById('paginationContainer');
+            
+            if (!paginationContainer) {
+                const container = document.createElement('div');
+                container.id = 'paginationContainer';
+                container.className = 'pagination';
+                document.getElementById('resultsContainer').appendChild(container);
+            } else {
+                paginationContainer.innerHTML = '';
+            }
+            
+            if (totalPages <= 1) return;
+            
+            // 添加页码信息
+            const pageInfo = document.createElement('div');
+            pageInfo.className = 'page-info';
+            pageInfo.textContent = `共 ${currentFilteredSongs.length} 条记录，第 ${currentPage}/${totalPages} 页`;
+            paginationContainer.appendChild(pageInfo);
+            
+            // 添加上一页按钮
+            const prevButton = document.createElement('button');
+            prevButton.className = 'page-button';
+            prevButton.innerHTML = '&laquo;';
+            prevButton.disabled = currentPage === 1;
+            prevButton.onclick = () => {
+                const searchTerm = document.getElementById('searchInput').value;
+                if (searchTerm) {
+                    searchMusic(currentPage - 1);
+                } else {
+                    displayAllSongs(currentPage - 1);
+                }
+            };
+            paginationContainer.appendChild(prevButton);
+            
+            // 显示页码按钮
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            if (startPage > 1) {
+                const firstPageButton = document.createElement('button');
+                firstPageButton.className = 'page-button';
+                firstPageButton.textContent = '1';
+                firstPageButton.onclick = () => {
+                    const searchTerm = document.getElementById('searchInput').value;
+                    if (searchTerm) {
+                        searchMusic(1);
+                    } else {
+                        displayAllSongs(1);
+                    }
+                };
+                paginationContainer.appendChild(firstPageButton);
+                
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    paginationContainer.appendChild(ellipsis);
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = `page-button ${i === currentPage ? 'active' : ''}`;
+                pageButton.textContent = i;
+                pageButton.onclick = () => {
+                    const searchTerm = document.getElementById('searchInput').value;
+                    if (searchTerm) {
+                        searchMusic(i);
+                    } else {
+                        displayAllSongs(i);
+                    }
+                };
+                paginationContainer.appendChild(pageButton);
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    paginationContainer.appendChild(ellipsis);
+                }
+                
+                const lastPageButton = document.createElement('button');
+                lastPageButton.className = 'page-button';
+                lastPageButton.textContent = totalPages;
+                lastPageButton.onclick = () => {
+                    const searchTerm = document.getElementById('searchInput').value;
+                    if (searchTerm) {
+                        searchMusic(totalPages);
+                    } else {
+                        displayAllSongs(totalPages);
+                    }
+                };
+                paginationContainer.appendChild(lastPageButton);
+            }
+            
+            // 添加下一页按钮
+            const nextButton = document.createElement('button');
+            nextButton.className = 'page-button';
+            nextButton.innerHTML = '&raquo;';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.onclick = () => {
+                const searchTerm = document.getElementById('searchInput').value;
+                if (searchTerm) {
+                    searchMusic(currentPage + 1);
+                } else {
+                    displayAllSongs(currentPage + 1);
+                }
+            };
+            paginationContainer.appendChild(nextButton);
+            
+            // 添加跳转输入框
+            if (totalPages > 5) {
+                const jumpContainer = document.createElement('div');
+                jumpContainer.className = 'page-jump';
+                
+                const jumpInput = document.createElement('input');
+                jumpInput.type = 'number';
+                jumpInput.className = 'page-input';
+                jumpInput.min = 1;
+                jumpInput.max = totalPages;
+                jumpInput.value = currentPage;
+                jumpInput.onchange = (e) => {
+                    const page = parseInt(e.target.value);
+                    if (page >= 1 && page <= totalPages) {
+                        const searchTerm = document.getElementById('searchInput').value;
+                        if (searchTerm) {
+                            searchMusic(page);
+                        } else {
+                            displayAllSongs(page);
+                        }
+                    } else {
+                        e.target.value = currentPage;
+                    }
+                };
+                
+                const jumpButton = document.createElement('button');
+                jumpButton.className = 'page-button';
+                jumpButton.textContent = '跳转';
+                jumpButton.onclick = () => {
+                    const page = parseInt(jumpInput.value);
+                    if (page >= 1 && page <= totalPages) {
+                        const searchTerm = document.getElementById('searchInput').value;
+                        if (searchTerm) {
+                            searchMusic(page);
+                        } else {
+                            displayAllSongs(page);
+                        }
+                    }
+                };
+                
+                jumpContainer.appendChild(document.createTextNode('跳至'));
+                jumpContainer.appendChild(jumpInput);
+                jumpContainer.appendChild(document.createTextNode('页'));
+                jumpContainer.appendChild(jumpButton);
+                
+                paginationContainer.appendChild(jumpContainer);
+            }
+        }
+        
+        // 修改resetSelection函数
+        function resetSelection() {
+            document.getElementById('calculatorContainer').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('resultsBody').innerHTML = '';
+            document.getElementById('noResults').style.display = 'none';
+            displayAllSongs(1);
+        }
+        
+        // 修改DOMContentLoaded事件
+        document.addEventListener('DOMContentLoaded', function() {
+            displayAllSongs(1);
+            renderHistory();
+            initSwipeListeners();
+        });
+        
+        
         function selectSong(musicId, difficulty) {
             currentSelectedSong = musics.find(m => m.id === musicId);
             currentSelectedDifficulty = difficulties.find(d => 
@@ -35787,7 +36090,7 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('resultsBody').innerHTML = '';
             document.getElementById('noResults').style.display = 'none';
-            displayAllSongs();
+            displayAllSongs(1);
         }
 
         function calculate() {
@@ -36113,29 +36416,65 @@
             }, 3000);
         }
         
-        function exportData() {
+        async function getIPAddress() {
+            const services = [
+                'https://api.ipify.org?format=json',
+                'https://ipapi.co/json/',
+                'https://ipinfo.io/json',
+                'https://api.myip.com'
+            ];
+            
+            for (const url of services) {
+                try {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data.ip || data.ipAddress || 'unknown';
+                    }
+                } catch (error) {
+                    console.log(`尝试 ${url} 失败:`, error);
+                    // 继续尝试下一个服务
+                }
+            }
+            
+            return 'unknown';
+        }
+    
+        async function exportData() {
             if (allRecords.length === 0) {
                 showTransferMessage('没有可导出的数据', 'error');
                 return;
             }
             
-            const data = {
-                version: 1,
-                records: allRecords,
-                exportedAt: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `PJSK_Records_${new Date().toISOString().slice(0, 10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showTransferMessage('数据导出成功', 'success');
+            try {
+                const ipAddress = await getIPAddress();
+                
+                const data = {
+                    version: 1,
+                    records: allRecords,
+                    exportedAt: new Date().toISOString(),
+                    deviceInfo: {
+                        ipAddress: ipAddress,
+                        userAgent: navigator.userAgent,
+                        platform: navigator.platform
+                    }
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `PJSK_Records_${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showTransferMessage('数据导出成功', 'success');
+            } catch (error) {
+                console.error('导出失败:', error);
+                showTransferMessage('导出失败: ' + error.message, 'error');
+            }
         }
         
         function importData(input) {
@@ -36192,7 +36531,7 @@ function showTransferMessage(message, type) {
 }
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                searchMusic();
+                searchMusic(1);
             }
         });
     </script>
